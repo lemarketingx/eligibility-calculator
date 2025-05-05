@@ -1,61 +1,75 @@
 // zaka.js
-$(function(){
-    // אתחול Select2
-    $('.select2').select2();
-  
-    // חישוב שנות נישואין
-    $('#marryDate').on('change', () => {
-      const d = new Date($('#marryDate').val());
-      if (!isNaN(d)) {
-        const yrs = new Date().getFullYear() - d.getFullYear();
-        $('#marryYears').val(yrs);
-      }
-      recalc();
-    });
-  
-    // כל שינוי בשדות – מחשב מחדש
-    $('.eligibility-form input, .eligibility-form select').on('input change', recalc);
-  
-    function recalc() {
-      // קורא ערכים
-      const yrs      = +$('#marryYears').val() || 0;
-      const kids     = +$('#childrenCount').val() || 0;
-      const sibs     = +$('#siblingsCount').val() || 0;
-      const mil      = +$('#militaryMonths').val() || 0;
-      const periph   = $('#isPeripheral').val() === 'yes';
-      const prog10   = $('#program10plus').val()   === 'yes';
-      const negev    = $('#isNegev').val()         === 'yes';
-      // רווקים (אם בש_TAB_SINGLE)
-      const age      = +$('#applicantAge').val()   || 0;
-      const rsibs    = +$('#singleSiblings').val() || 0;
-      const rmil     = +$('#singleMilitary').val() || 0;
-  
-      let score = 0;
-  
-      // קריטריונים למשפחה
-      score += yrs >= 2 ? 250 + (yrs -1)*50 : 0;
-      if (yrs === 1) score += 250;
-      score += kids >=1 ? 350 + (kids-1)*150 : 0;
-      score += sibs * 50;
-      score += mil * 10;
-      if (periph) score += 100;
-      if (prog10) score += 100;
-      if (negev)  score += 100;
-  
-      // קריטריונים לרווקים
-      if ($('#tab-single').hasClass('active')) {
-        score = 0;
-        if (age >= 30) score += 200;
-        score += rsibs * 50;
-        score += rmil * 10;
-      }
-  
-      // הצגת תוצאות
-      $('#totalScore').val(score);
-      $('#baseEligibility').val(score >= 1000 ? 'זכאי' : 'לא זכאי');
-    }
-  
-    // קריאה ראשונית
-    recalc();
-  });
-  
+
+// פונקציה ראשית שמבצעת את כל החישובים
+function calculateEligibility() {
+  // 1. אוספים את כל הערכים מהטופס
+  const form = document.getElementById('zakaForm');
+  const data = {
+    // משפחה
+    marryDate: form.marrydate.value,
+    marryYears: +form.marry_years.value,
+    children: +form.y1.value,
+    sibHusband: +form.a1.value,
+    sibWife: +form.aa1.value,
+    srvHusband: +form.zavaman.value,
+    srvWife: +form.zavawoman.value,
+    priorityZone: form.leumit1.value === 'כן',
+    plan10: form.eserplus.value === 'כן',
+    negev: +form.negev.value,
+
+    single: form.ravak1.checked, // לא ממש בשימוש פה
+    ravakPriority: form.ravak1.value === 'כן',
+    ravakAge: +form.ravak3.value,
+    ravakSib: +form.ravak4.value,
+    ravakSrv: +form.ravak2.value,
+    ravakDis75: form.nechut_ravak.value === 'כן',
+    ravakWheel: form.nechutkise_ravak.value === 'כן',
+    ravakOlim: form.olim_ravak.value === 'כן',
+    ravakYears: +form.olim_vetek_ravak.value,
+
+    // סטטוס נוסף
+    chadhorit: form.chadhorit_family.value === 'כן',
+    dis75: form.nechut_family.value === 'כן',
+    wheel: form.nechutkise_family.value === 'כן',
+    olimFamily: form.olim_family.value === 'כן',
+    vetek: +form.olim_vetek.value
+  };
+
+  // 2. חישוב ניקוד (דוגמה בסיסית)
+  let score = 0;
+  if (data.marryYears >= 5) score += 10;
+  score += data.children * 5;
+  score += data.srvHusband + data.srvWife > 0 ? 5 : 0;
+  if (data.priorityZone) score += 8;
+  if (data.plan10) score += 7;
+  score += data.negev;
+
+  if (data.chadhorit) score += 5;
+  if (data.dis75) score += 15;
+  if (data.wheel) score += 20;
+  if (data.olimFamily) score += 12;
+  score += data.vetek;
+
+  // 3. על פי הניקוד – סכום זכאות בסיסית (דוגמה)
+  let baseEligibility = score * 1000;     // ₪
+  let armyBonus    = (data.srvHusband + data.srvWife) * 2000;
+  let plan10Bonus  = data.plan10 ? 50000 : 0;
+  let negevBonus   = data.negev * 10000;
+
+  // 4. סכום סופי
+  let total = baseEligibility + armyBonus + plan10Bonus + negevBonus;
+
+  // 5. עדכון השדות ב־DOM
+  form.nikud.value   = score;
+  form.zakaut.value  = baseEligibility.toLocaleString();
+  form.zava.value    = armyBonus.toLocaleString();
+  form.eserplusmain.value = plan10Bonus.toLocaleString();
+  form.tosefetnegev.value = negevBonus.toLocaleString();
+  form.zsofi.value   = total.toLocaleString();
+}
+
+// חיבור הכפתור
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('computeBtn')
+          .addEventListener('click', calculateEligibility);
+});
