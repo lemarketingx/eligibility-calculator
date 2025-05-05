@@ -5,267 +5,265 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>מחשבון זכאות</title>
 
-  <!-- פונט -->
-  <link href="https://fonts.googleapis.com/css?family=Heebo&display=swap" rel="stylesheet">
+  <!-- גופנים -->
+  <link href="https://fonts.googleapis.com/css?family=Heebo" rel="stylesheet">
 
-  <!-- Bootstrap & Material -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-
-  <!-- Select2 -->
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-
-  <!-- קבצי CSS מקומיים -->
+  <!-- CSS רגיל -->
+  <link rel="stylesheet" href="normalize.css">
+  <link rel="stylesheet" href="bootstrap.css">
   <link rel="stylesheet" href="zaka.css?v=0.0.1">
-  <link rel="stylesheet" href="shpitzer.css">
+
+  <!-- Material / Select2 -->
+  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
 
   <style>
-    body { font-family: 'Heebo', sans-serif; background: #f5f5f5; }
-    .maintop { height: 80px; background: #fff; display: flex; align-items: center; padding: 0 1rem; }
-    .maintop img { height: 60px; }
-    .container { margin-top: 2rem; }
-    fieldset { border: 1px solid #ddd; margin-bottom: 1rem; padding: 1rem; background: #fff; }
-    legend { font-weight: bold; }
-    .form-group label { text-align: right; }
-    .results-table input { background: #fff; text-align: center; }
+    /* FORCE RTL על כל השדות וה־Select2 */
+    body,
+    input, select, .form-control,
+    .select2-container,
+    .select2-selection__rendered {
+      direction: rtl !important;
+      text-align: right !important;
+    }
+    /* כותרות מתחת למסלולים */
+    label.section-title {
+      display: block;
+      margin: 1em 0 .5em;
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #333;
+    }
   </style>
 </head>
 <body>
 
-  <!-- סרגל עליון עם לוגו שלכם בלבד -->
-  <div class="maintop">
-    <img src="images/logo.png" alt="לוגו החברה"/>
-  </div>
+  <form id="zakaForm" autocomplete="off">
+    <!-- כפתור חישוב -->
+    <div class="text-center my-4">
+      <button type="button" id="computeBtn" class="btn btn-primary">חשב זכאות</button>
+    </div>
 
-  <div class="container">
-    <h2 class="text-center mb-4">מחשבון זכאות</h2>
+    <!-- לשוניות -->
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#familyTab">משפחה</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#singleTab">רווק/ה</a>
+      </li>
+    </ul>
 
-    <form id="zakaForm" autocomplete="off">
-      <!-- תוצאות ראשוניות -->
-      <table class="table table-borderless results-table mb-4">
-        <thead>
-          <tr class="bg-light">
-            <th>ניקוד</th>
-            <th>זכאות בסיסית</th>
-            <th>שירות צבאי</th>
-            <th>תוכנית 10+</th>
-            <th>זכאות הנגב</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><input type="text" name="nikud" class="form-control" placeholder="ניקוד" disabled></td>
-            <td><input type="text" name="zakaut" class="form-control" placeholder="₪" disabled></td>
-            <td><input type="text" name="zava" class="form-control" placeholder="₪" disabled></td>
-            <td><input type="text" name="eserplusmain" class="form-control" placeholder="₪" disabled></td>
-            <td><input type="text" name="tosefetnegev" class="form-control" placeholder="₪" disabled></td>
-          </tr>
-          <tr>
-            <th colspan="5" class="text-center">סכום זכאות סופי</th>
-          </tr>
-          <tr>
-            <td colspan="5">
-              <input type="text" name="zsofi" class="form-control font-weight-bold" style="font-size:1.25rem;text-align:center" placeholder="₪" disabled>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- לשונית משפחה/רווק -->
-      <ul class="nav nav-tabs mb-3" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" data-toggle="tab" href="#famfam">משפחה</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" href="#single">רווק/ה</a>
-        </li>
-      </ul>
-
-      <div class="tab-content">
-        <!-- משפחה -->
-        <div id="famfam" class="tab-pane fade show active">
-          <fieldset>
-            <legend>פרטי משפחה</legend>
-            <div class="form-row">
-              <div class="form-group col-md-4">
-                <label for="marrydate">תאריך נישואין</label>
-                <input type="date" id="marrydate" name="marrydate" class="form-control"/>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="marry_years">שנות נישואין</label>
-                <input type="number" id="marry_years" name="marry_years" class="form-control"/>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="y1">מס’ ילדים עד גיל 21</label>
-                <input type="number" id="y1" name="y1" class="form-control"/>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="a1">אחים לבעל</label>
-                <input type="number" id="a1" name="a1" class="form-control"/>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="aa1">אחים לאשה</label>
-                <input type="number" id="aa1" name="aa1" class="form-control"/>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend>שירות צבאי ותוספות</legend>
-            <div class="form-row">
-              <div class="form-group col-md-3">
-                <label for="zavaman">חודשים שירות לבעל</label>
-                <input type="number" id="zavaman" name="zavaman" class="form-control"/>
-              </div>
-              <div class="form-group col-md-3">
-                <label for="zavawoman">חודשים שירות לאשה</label>
-                <input type="number" id="zavawoman" name="zavawoman" class="form-control"/>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="leumit1">עדיפות לאומית</label>
-                <select id="leumit1" name="leumit1" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="eserplus">תוכנית 10+</label>
-                <select id="eserplus" name="eserplus" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="negev">זכאות חוק הנגב</label>
-                <select id="negev" name="negev" class="form-control select2">
-                  <option value="0">לא</option>
-                  <option value="2">אבו קרינאת</option>
-                  <!-- שאר הרשימה -->
-                </select>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend>סטטוס משפחתי</legend>
-            <div class="form-row">
-              <div class="form-group col-md-3">
-                <label for="chadhorit_family">משפחה חד-הורית?</label>
-                <select id="chadhorit_family" name="chadhorit_family" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-3">
-                <label for="nechut_family">נכות ≥ 75%?</label>
-                <select id="nechut_family" name="nechut_family" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-3">
-                <label for="nechutkise_family">מרותק לכסא גלגלים?</label>
-                <select id="nechutkise_family" name="nechutkise_family" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-3">
-                <label for="olim_family">עולים חדשים?</label>
-                <select id="olim_family" name="olim_family" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-3">
-                <label for="olim_vetek">וותק בארץ (שנים)</label>
-                <input type="number" id="olim_vetek" name="olim_vetek" class="form-control"/>
-              </div>
-            </div>
-          </fieldset>
+    <div class="tab-content p-3" style="background:#f5f5f5;">
+      <!-- טאב משפחה -->
+      <div id="familyTab" class="tab-pane fade show active">
+        <label class="section-title">פרטי המשפחה</label>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label>תאריך נישואין</label>
+            <input type="date" id="marrydate" class="form-control" />
+          </div>
+          <div class="form-group col-md-4">
+            <label>שנות נישואין</label>
+            <input type="number" id="marry_years" class="form-control" />
+          </div>
+          <div class="form-group col-md-4">
+            <label>מספר ילדים עד גיל 21</label>
+            <input type="number" id="children" class="form-control" />
+          </div>
         </div>
-
-        <!-- רווק/ה -->
-        <div id="single" class="tab-pane fade">
-          <fieldset>
-            <legend>פרטי רווק/ה</legend>
-            <div class="form-row">
-              <div class="form-group col-md-3">
-                <label for="ravak1">עדיפות לאומית?</label>
-                <select id="ravak1" name="ravak1" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="ravak3">גיל</label>
-                <input type="number" id="ravak3" name="ravak3" class="form-control"/>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="ravak4">מס’ אחים</label>
-                <input type="number" id="ravak4" name="ravak4" class="form-control"/>
-              </div>
-              <div class="form-group col-md-2">
-                <label for="ravak2">שירות צבאי (חודשים)</label>
-                <input type="number" id="ravak2" name="ravak2" class="form-control"/>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset>
-            <div class="form-row">
-              <div class="form-group col-md-3">
-                <label for="nechut_ravak">נכות ≥ 75%?</label>
-                <select id="nechut_ravak" name="nechut_ravak" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-3">
-                <label for="nechutkise_ravak">מרותק לכסא גלגלים?</label>
-                <select id="nechutkise_ravak" name="nechutkise_ravak" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-3">
-                <label for="olim_ravak">עולה חדש?</label>
-                <select id="olim_ravak" name="olim_ravak" class="form-control">
-                  <option value="לא">לא</option>
-                  <option value="כן">כן</option>
-                </select>
-              </div>
-              <div class="form-group col-md-3">
-                <label for="olim_vetek_ravak">וותק בארץ (שנים)</label>
-                <input type="number" id="olim_vetek_ravak" name="olim_vetek_ravak" class="form-control"/>
-              </div>
-            </div>
-          </fieldset>
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            <label>אחים לבעל</label>
+            <input type="number" id="brothers_husband" class="form-control" />
+          </div>
+          <div class="form-group col-md-3">
+            <label>אחים לאשה</label>
+            <input type="number" id="brothers_wife" class="form-control" />
+          </div>
+          <div class="form-group col-md-3">
+            <label>חוד' שירות צבאי לבעל</label>
+            <input type="number" id="army_husband" class="form-control" />
+          </div>
+          <div class="form-group col-md-3">
+            <label>חוד' שירות צבאי לאשה</label>
+            <input type="number" id="army_wife" class="form-control" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label>רוכשים באיזור עדיפות לאומית</label>
+            <select id="periphery_family" class="form-control select2">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label>תוכנית 10+</label>
+            <select id="plan10_family" class="form-control">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label>זכאות חוק הנגב</label>
+            <select id="negev_family" class="form-control select2">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            <label>משפחה חד הורית?</label>
+            <select id="single_parent" class="form-control">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label>נכות ≥75%?</label>
+            <select id="disability" class="form-control">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label>מרותק לכסא גלגלים?</label>
+            <select id="wheelchair" class="form-control">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+          <div class="form-group col-md-3">
+            <label>עולים חדשים?</label>
+            <select id="new_immigrant_family" class="form-control">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row" id="immigrant_details" style="display:none;">
+          <div class="form-group col-md-4">
+            <label>וותק בארץ (בשנים)</label>
+            <input type="number" id="immigrant_years_family" class="form-control" />
+          </div>
         </div>
       </div>
 
-      <!-- כפתור חישוב -->
-      <div class="text-center my-4">
-        <button type="button" id="computeBtn" class="btn btn-success btn-lg">חשב זכאות</button>
+      <!-- טאב רווק -->
+      <div id="singleTab" class="tab-pane fade">
+        <label class="section-title">פרטי הרווק/ה</label>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label>רוכש באיזור עדיפות לאומית</label>
+            <select id="periphery_single" class="form-control select2">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label>גיל</label>
+            <input type="number" id="age_single" class="form-control" />
+          </div>
+          <div class="form-group col-md-4">
+            <label>מספר אחים</label>
+            <input type="number" id="brothers_single" class="form-control" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label>חוד' שירות צבאי</label>
+            <input type="number" id="army_single" class="form-control" />
+          </div>
+          <div class="form-group col-md-4">
+            <label>נכות ≥75%?</label>
+            <select id="disability_single" class="form-control">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label>מרותק לכסא גלגלים?</label>
+            <select id="wheelchair_single" class="form-control">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label>עולה חדש?</label>
+            <select id="new_immigrant_single" class="form-control">
+              <option value="לא">לא</option>
+              <option value="כן">כן</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4 immigrant-single-details" style="display:none;">
+            <label>וותק בארץ (בשנים)</label>
+            <input type="number" id="immigrant_years_single" class="form-control" />
+          </div>
+        </div>
       </div>
-    </form>
-  </div>
+    </div>
 
-  <!-- jQuery, Bootstrap JS, Select2, Material -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- תוצאות -->
+    <label class="section-title">תוצאות הזכאות</label>
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        <label>ניקוד כולל</label>
+        <input type="text" id="totalScore" class="form-control" disabled />
+      </div>
+      <div class="form-group col-md-3">
+        <label>זכאות בסיסית</label>
+        <input type="text" id="baseEligibility" class="form-control" disabled />
+      </div>
+      <div class="form-group col-md-3">
+        <label>תוספת שירות צבאי</label>
+        <input type="text" id="armyBonus" class="form-control" disabled />
+      </div>
+      <div class="form-group col-md-3">
+        <label>סכום סופי</label>
+        <input type="text" id="finalAmount" class="form-control" disabled />
+      </div>
+    </div>
+
+  </form>
+
+  <!-- JS Libraries -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
 
-  <!-- הקבצים המקומיים -->
+  <!-- הזנת הקוד שלכם לחישוב -->
   <script src="zaka.js?v=0.0.9.6"></script>
+
   <script>
-    // מאתחלים select2 ב־RTL ובעברית
-    $(document).ready(function(){
-      $('.select2').select2({
-        dir: 'rtl',
-        language: 'he',
-        width: '100%'
+    function calculateEligibility() {
+      // כאן תכניסו את קריאת הפונקציה המרכזית שלכם מ־zaka.js
+      // למשל: zaka.compute();
+    }
+
+    $(function(){
+      // אתחול Select2 ב־RTL
+      $('.select2').select2({ dir: 'rtl', width: '100%' });
+
+      // כפתור חשב
+      $('#computeBtn').on('click', calculateEligibility);
+
+      // חישוב כשמשנים לשונית
+      $('a[data-toggle="tab"]').on('shown.bs.tab', calculateEligibility);
+
+      // חישוב אוטומטי כשמשנים ערך בשדה
+      $('#zakaForm').on('change', 'input, select', calculateEligibility);
+
+      // הצגת/הסתרת שדות עולה חדש
+      $('#new_immigrant_family').on('change', function(){
+        $('#immigrant_details').toggle(this.value === 'כן');
+      });
+      $('#new_immigrant_single').on('change', function(){
+        $('.immigrant-single-details').toggle(this.value === 'כן');
       });
     });
   </script>
