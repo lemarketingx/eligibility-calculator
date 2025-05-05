@@ -1,220 +1,106 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>מחשבון זכאות</title>
-
-  <!-- Bootstrap 4 -->
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
-  <!-- Select2 (RTL) -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-    rel="stylesheet"
-  />
-
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css">
   <style>
-    body {
-      background: #f5f5f5;
-    }
-    #zakaForm {
-      background: #fff;
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 2rem;
-      border-radius: 4px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      direction: rtl;            /* Force RTL */
-      text-align: right;         /* הכיתוב יתחיל מימין */
-    }
-    /* כל השדות מיושרים לימין */
-    #zakaForm .form-control,
-    #zakaForm .select2-selection--single {
-      text-align: right;
-      direction: rtl;
-    }
-    /* תפריט הלשוניות מימין */
-    #zakaForm .nav-tabs {
-      justify-content: flex-end;
-    }
-    /* ריווח קל בין הכפתור ללשוניות */
-    #calculateBtn {
-      margin-bottom: 1rem;
-    }
+    body { direction: rtl; text-align: right; }
+    label, .form-control, select { text-align: right; direction: rtl; }
+    #results { display: none; }
   </style>
 </head>
 <body>
 
-  <div id="zakaForm">
-    <h2 class="mb-4">מחשבון זכאות</h2>
+  <div class="container py-4">
+    <h1 class="text-center mb-4">מחשבון זכאות</h1>
 
-    <button id="calculateBtn" class="btn btn-primary mb-3">
-      חשב זכאות
-    </button>
-
-    <!-- לשוניות -->
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-pills mb-3 justify-content-end" id="tabs">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#tab-fam">משפחה</a>
+        <a class="nav-link active" data-toggle="pill" href="#family-tab">משפחה</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#tab-single">רווק/ה</a>
+        <a class="nav-link" data-toggle="pill" href="#single-tab">רווק/ה</a>
+      </li>
+      <li class="ml-auto">
+        <button id="calcBtn" class="btn btn-primary">חשב זכאות</button>
       </li>
     </ul>
 
     <div class="tab-content">
-      <!-- ==== משפחה ==== -->
-      <div id="tab-fam" class="tab-pane fade show active">
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="marrydate">תאריך נישואין</label>
-            <input type="date" id="marrydate" class="form-control"/>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="marry_years">שנות נישואין</label>
-            <input type="number" id="marry_years" class="form-control" min="0"/>
-          </div>
-        </div>
+      <!-- משפחה -->
+      <div class="tab-pane fade show active" id="family-tab">
         <div class="form-row">
           <div class="form-group col-md-4">
+            <label for="marryDate">תאריך נישואין</label>
+            <input type="date" id="marryDate" class="form-control">
+          </div>
+          <div class="form-group col-md-2">
+            <label for="marryYears">שנות נישואין</label>
+            <input type="number" id="marryYears" class="form-control">
+          </div>
+          <div class="form-group col-md-2">
             <label for="children">מספר ילדים עד גיל 21</label>
-            <input type="number" id="children" class="form-control" min="0"/>
+            <input type="number" id="children" class="form-control">
           </div>
-          <div class="form-group col-md-4">
-            <label for="brothers_husband">אחים לבעל</label>
-            <input type="number" id="brothers_husband" class="form-control" min="0"/>
+          <div class="form-group col-md-2">
+            <label for="brothersHusband">אחים לבעל</label>
+            <input type="number" id="brothersHusband" class="form-control">
           </div>
-          <div class="form-group col-md-4">
-            <label for="brothers_wife">אחים לאשה</label>
-            <input type="number" id="brothers_wife" class="form-control" min="0"/>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="military_husband">חוד׳ שירות צבאי לבעל</label>
-            <input type="number" id="military_husband" class="form-control" min="0"/>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="military_wife">חוד׳ שירות צבאי לאשה</label>
-            <input type="number" id="military_wife" class="form-control" min="0"/>
+          <div class="form-group col-md-2">
+            <label for="brothersWife">אחים לאשה</label>
+            <input type="number" id="brothersWife" class="form-control">
           </div>
         </div>
+
         <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="priority_zone">רוכשים באזור עדיפות לאומית</label>
-            <select id="priority_zone" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
+          <div class="form-group col-md-3">
+            <label for="serviceHusband">חוד׳ שירות צבאי לבעל</label>
+            <input type="number" id="serviceHusband" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="serviceWife">חוד׳ שירות צבאי לאשה</label>
+            <input type="number" id="serviceWife" class="form-control">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="inCenter">רוכשים באיזור עדיפו׳ לאומית</label>
+            <select id="inCenter" class="form-control">
+              <option>לא</option>
+              <option>כן</option>
             </select>
           </div>
-          <div class="form-group col-md-4">
-            <label for="plan10plus">תוכנית 10+</label>
-            <select id="plan10plus" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
+          <div class="form-group col-md-3">
+            <label for="plus10">תוכנית 10+</label>
+            <select id="plus10" class="form-control">
+              <option>לא</option>
+              <option>כן</option>
             </select>
-          </div>
-          <div class="form-group col-md-4">
-            <label for="negev_law">זכאות חוק הנגב</label>
-            <select id="negev_law" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="single_parent">משפחה חד־הורית?</label>
-            <select id="single_parent" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
-            </select>
-          </div>
-          <div class="form-group col-md-4">
-            <label for="disability">נכות 75% או יותר?</label>
-            <select id="disability" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
-            </select>
-          </div>
-          <div class="form-group col-md-4">
-            <label for="wheelchair">מרותק לכסא גלגלים?</label>
-            <select id="wheelchair" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="olim">עולה חדש?</label>
-            <select id="olim" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
-            </select>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="olim_years">וותק בארץ (בשנים)</label>
-            <input type="number" id="olim_years" class="form-control" min="0"/>
           </div>
         </div>
       </div>
 
-      <!-- ==== רווק/ה ==== -->
-      <div id="tab-single" class="tab-pane fade">
+      <!-- רווק/ה -->
+      <div class="tab-pane fade" id="single-tab">
         <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="single_priority">רוכש באזור עדיפות לאומית</label>
-            <select id="single_priority" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
+          <div class="form-group col-md-3">
+            <label for="singleCenter">רוכש באיזור עדיפו׳ לאומית</label>
+            <select id="singleCenter" class="form-control">
+              <option>לא</option>
+              <option>כן</option>
             </select>
           </div>
           <div class="form-group col-md-3">
-            <label for="single_age">גיל</label>
-            <input type="number" id="single_age" class="form-control" min="18"/>
+            <label for="singleAge">גיל</label>
+            <input type="number" id="singleAge" class="form-control">
           </div>
           <div class="form-group col-md-3">
-            <label for="single_siblings">מספר אחים</label>
-            <input type="number" id="single_siblings" class="form-control" min="0"/>
+            <label for="singleBrothers">מספר אחים</label>
+            <input type="number" id="singleBrothers" class="form-control">
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="single_military">חוד׳ שירות צבאי</label>
-            <input type="number" id="single_military" class="form-control" min="0"/>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="single_disability">נכות 75% או יותר?</label>
-            <select id="single_disability" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="single_wheelchair">מרותק לכסא גלגלים?</label>
-            <select id="single_wheelchair" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
-            </select>
-          </div>
-          <div class="form-group col-md-6">
-            <label for="single_olim">עולה חדש?</label>
-            <select id="single_olim" class="form-control">
-              <option value="לא">לא</option>
-              <option value="כן">כן</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <label for="single_olim_years">וותק בארץ (בשנים)</label>
-            <input type="number" id="single_olim_years" class="form-control" min="0"/>
+          <div class="form-group col-md-3">
+            <label for="singleService">חוד׳ שירות צבאי</label>
+            <input type="number" id="singleService" class="form-control">
           </div>
         </div>
       </div>
@@ -222,42 +108,38 @@
 
     <!-- תוצאות -->
     <div id="results" class="mt-4">
-      <!-- כאן נכניס את הפלט של המחשבון -->
+      <h4>תוצאות הזכאות</h4>
+      <p id="score">ניקוד כולל: –</p>
+      <p id="baseEntitlement">זכאות בסיסית: –</p>
+      <p id="armyBonus">תוספת שירות צבאי: –</p>
+      <p id="plus10Bonus">תוספת תוכנית 10+: –</p>
+      <p id="negevBonus">תוספת זכאות הנגב: –</p>
     </div>
   </div>
 
-  <!-- ספריות JS -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"
-  ></script>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"
-  ></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-  <!-- הסקריפט שלכם -->
-  <script src="zaka.js"></script>
   <script>
-    $(document).ready(function(){
-      // אתחול select2
-      $('.form-control').filter('select').select2({
-        width: '100%',
-        dir: 'rtl'
-      });
+    function calculateEligibility() {
+      // דוגמה לחישוב (להחליף בלוגיקה מ-zaka.js):
+      let score = 0;
+      const years = parseInt(document.getElementById('marryYears').value) || 0;
+      const kids = parseInt(document.getElementById('children').value) || 0;
+      score += years * 50;
+      score += kids * 350;
+      // … הוסיפו כאן את שאר הקריטריונים …
 
-      function recalc(){
-        // תקראו לפונקציית חישוב שלכם, למשל:
-        // Zaka.calculate();
-        // ופשוט תכניסו את התוצאה לתוך #results
-      }
+      document.getElementById('score').textContent = `ניקוד כולל: ${score}`;
+      document.getElementById('baseEntitlement').textContent = `זכאות בסיסית: ${score >= 600 ? 'כן' : 'לא'}`;
+      // … החליפו את שאר השורות בהתאם לתוצאות …
+      document.getElementById('results').style.display = 'block';
+    }
 
-      // חישוב בלחיצה
-      $('#calculateBtn').on('click', recalc);
-      // וגם בכל מעבר ללשונית – נסגור ונחשב מחדש
-      $('a[data-toggle="tab"]').on('shown.bs.tab', recalc);
+    document.getElementById('calcBtn').addEventListener('click', calculateEligibility);
+    document.querySelectorAll('a[data-toggle="pill"]').forEach(tab => {
+      tab.addEventListener('shown.bs.tab', calculateEligibility);
     });
   </script>
 
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
