@@ -1,0 +1,24 @@
+/* zaka.css */
+body {
+    background: #f8f9fa;
+    font-family: "Heebo", sans-serif;
+  }
+  .site-header {
+    background: #fff;
+  }
+  .logo {
+    height: 50px;
+  }
+  .eligibility-form .form-group label {
+    font-weight: 600;
+  }
+  .select2-container--default .select2-selection--single {
+    height: 38px;
+    padding: 3px 8px;
+  }
+  #summary input {
+    background: #fff;
+    font-weight: bold;
+    text-align: center;
+  }
+  
