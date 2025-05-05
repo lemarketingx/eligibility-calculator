@@ -4,165 +4,196 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>מחשבון זכאות</title>
+
+  <!-- גופנים וספריות -->
   <link href="https://fonts.googleapis.com/css?family=Heebo" rel="stylesheet">
-  <link rel="stylesheet" href="normalize.css">
-  <link rel="stylesheet" href="bootstrap.css">
-  <link rel="stylesheet" href="zaka.css?v=0.0.1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  
   <style>
-    /* תוספת ל-RTL בסקשן המשפחה */
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Heebo', sans-serif;
+    }
+    .calculator-container {
+      width: 800px;
+      margin: 30px auto;
+      background: #111;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(255,215,0,0.5);
+    }
+    .nav-tabs .nav-link {
+      color: gold;
+      border: 1px solid gold;
+    }
+    .nav-tabs .nav-link.active {
+      background: gold;
+      color: #000;
+    }
+    .tab-content {
+      margin-top: 20px;
+    }
     #customForm {
       display: flex;
       flex-wrap: wrap;
       direction: rtl;
-      justify-content: flex-start;
+      justify-content: space-between;
     }
     #customForm fieldset {
-      flex: 1 30%;
-      margin: 0.5em 0.5em 0.5em 0;
-      padding: 1em;
-      background: #ebeff2;
-      border: 1px solid #ddd;
+      flex: 0 0 48%;
+      background: #222;
+      padding: 15px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      margin-bottom: 20px;
     }
     #customForm label {
       display: block;
       text-align: right;
-      margin-bottom: 0.25em;
+      margin-bottom: 5px;
+      color: gold;
       font-weight: 500;
     }
     #customForm .form-control,
-    #customForm input.zakzak,
-    #customForm input.zman,
-    #customForm input.zava,
-    #customForm select.zakzakselect {
+    #customForm select {
       text-align: center;
-      margin-bottom: 0.75em;
+      margin-bottom: 15px;
+      background: #000;
+      border: 1px solid #444;
+      color: #fff;
+    }
+    .btn-calc {
+      background: gold;
+      color: #000;
+      font-weight: 700;
     }
   </style>
 </head>
+
 <body>
 
-  <!-- כותרת עליונה -->
-  <div class="maintop">
-    <img src="images/logo.png" alt="Logo" style="height:80px;">
-  </div>
+  <div class="calculator-container">
+    <h2 class="text-center mb-4" style="color: gold;">מחשבון זכאות</h2>
 
-  <!-- ניווט טאב -->
-  <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link active" data-toggle="tab" href="#famfam">משפחה</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#single">רווק/ה</a>
-    </li>
-  </ul>
+    <!-- טאבים -->
+    <ul class="nav nav-tabs justify-content-center" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#family" role="tab">משפחה</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#single" role="tab">רווק/ה</a>
+      </li>
+    </ul>
 
-  <!-- תוכן הטאבים -->
-  <div class="tab-content">
+    <!-- תוכן טאבים -->
+    <div class="tab-content">
 
-    <!-- טאב משפחה -->
-    <div id="famfam" class="tab-pane active">
-      <div id="customForm">
+      <!-- טאב משפחה -->
+      <div class="tab-pane fade show active" id="family" role="tabpanel">
+        <form id="form-family">
+          <div id="customForm">
+            <fieldset>
+              <label for="marrydate">תאריך נישואין</label>
+              <input type="date" id="marrydate" name="marrydate" class="form-control">
 
-        <fieldset>
-          <label for="marrydate">תאריך נישואין</label>
-          <input type="text" id="marrydate" name="marrydate" class="zakzak marry_date taarich form-control">
+              <label for="marry_years">שנות נישואין</label>
+              <input type="number" id="marry_years" name="marry_years" class="form-control" min="0">
+            </fieldset>
 
-          <label for="marry_years">שנות נישואין</label>
-          <input type="text" id="marry_years" name="n1" class="zakzak form-control">
-        </fieldset>
+            <fieldset>
+              <label for="children">מספר ילדים עד גיל 21</label>
+              <input type="number" id="children" name="children" class="form-control" min="0">
 
-        <fieldset>
-          <label for="Editbox44">מספר ילדים עד גיל 21</label>
-          <input type="text" id="Editbox44" name="y1" class="zakzak form-control">
+              <label for="brothers_husband">אחים לבעל</label>
+              <input type="number" id="brothers_husband" name="brothers_husband" class="form-control" min="0">
 
-          <label for="Editbox55">אחים לבעל</label>
-          <input type="text" id="Editbox55" name="a1" class="zakzak form-control">
+              <label for="brothers_wife">אחים לאשה</label>
+              <input type="number" id="brothers_wife" name="brothers_wife" class="form-control" min="0">
+            </fieldset>
 
-          <label for="Editbox100">אחים לאשה</label>
-          <input type="text" id="Editbox100" name="aa1" class="zakzak form-control">
-        </fieldset>
+            <fieldset>
+              <label for="service_husband">חודשים שירות צבאי לבעל</label>
+              <input type="number" id="service_husband" name="service_husband" class="form-control" min="0">
 
-        <fieldset>
-          <label for="zavaman">חודשי שירות צבאי לבעל</label>
-          <input type="text" id="zavaman" name="zavaman" class="zman form-control">
+              <label for="service_wife">חודשים שירות צבאי לאשה</label>
+              <input type="number" id="service_wife" name="service_wife" class="form-control" min="0">
 
-          <label for="zavawoman">חודשי שירות צבאי לאשה</label>
-          <input type="text" id="zavawoman" name="zavawoman" class="zwoman form-control">
-
-          <label for="leumit1">רוכשים באיזור עדיפות לאומית</label>
-          <select id="leumit1" name="leumit1" class="zakzakselect form-control">
-            <option value="לא">לא</option>
-            <option value="כן">כן</option>
-          </select>
-        </fieldset>
-
+              <label for="priority_area">רוכשים באיזור עדיפות לאומית</label>
+              <select id="priority_area" name="priority_area" class="form-control">
+                <option value="לא">לא</option>
+                <option value="כן">כן</option>
+              </select>
+            </fieldset>
+          </div>
+        </form>
       </div>
+
+      <!-- טאב רווק/ה -->
+      <div class="tab-pane fade" id="single" role="tabpanel">
+        <form id="form-single">
+          <div id="customForm">
+            <fieldset>
+              <label for="single_priority_area">רוכש באיזור עדיפות לאומית</label>
+              <select id="single_priority_area" name="single_priority_area" class="form-control">
+                <option value="לא">לא</option>
+                <option value="כן">כן</option>
+              </select>
+
+              <label for="age">גיל</label>
+              <input type="number" id="age" name="age" class="form-control" min="18">
+
+              <label for="siblings">מספר אחים</label>
+              <input type="number" id="siblings" name="siblings" class="form-control" min="0">
+
+              <label for="service_single">חודשים שירות צבאי</label>
+              <input type="number" id="service_single" name="service_single" class="form-control" min="0">
+            </fieldset>
+
+            <fieldset>
+              <label for="disability">נכות 75% או יותר?</label>
+              <select id="disability" name="disability" class="form-control">
+                <option value="לא">לא</option>
+                <option value="כן">כן</option>
+              </select>
+
+              <label for="wheelchair">מרותק לכיסא גלגלים?</label>
+              <select id="wheelchair" name="wheelchair" class="form-control">
+                <option value="לא">לא</option>
+                <option value="כן">כן</option>
+              </select>
+
+              <label for="new_immigrant">האם עולה חדש?</label>
+              <select id="new_immigrant" name="new_immigrant" class="form-control">
+                <option value="לא">לא</option>
+                <option value="כן">כן</option>
+              </select>
+
+              <label for="years_in_country">וותק בארץ בשנים</label>
+              <input type="number" id="years_in_country" name="years_in_country" class="form-control" min="0">
+            </fieldset>
+          </div>
+        </form>
+      </div>
+
     </div>
 
-    <!-- טאב רווק/ה -->
-    <div id="single" class="tab-pane">
-      <div id="customForm">
-
-        <fieldset>
-          <label for="ravak1">רוכש באיזור עדיפות לאומית</label>
-          <select id="ravak1" name="ravak1" class="zakzak2select form-control">
-            <option value="לא">לא</option>
-            <option value="כן">כן</option>
-          </select>
-
-          <label for="ravak3">גיל</label>
-          <input type="text" id="ravak3" name="ravak3" class="zakzak2 form-control">
-
-          <label for="ravak4">מספר אחים</label>
-          <input type="text" id="ravak4" name="ravak4" class="zakzak2 form-control">
-
-          <label for="ravak2">חודשי שירות צבאי</label>
-          <input type="text" id="ravak2" name="ravak2" class="zakzak2 form-control">
-        </fieldset>
-
-        <fieldset>
-          <label for="nechut_ravak">נכות 75% או יותר?</label>
-          <select id="nechut_ravak" name="nechut_ravak" class="zakzak2select form-control">
-            <option value="לא">לא</option>
-            <option value="כן">כן</option>
-          </select>
-
-          <label for="nechutkise_ravak">מרותק לכסא גלגלים?</label>
-          <select id="nechutkise_ravak" name="nechutkise_ravak" class="zakzak2select form-control">
-            <option value="לא">לא</option>
-            <option value="כן">כן</option>
-          </select>
-
-          <label for="olim_ravak">האם עולה חדש?</label>
-          <select id="olim_ravak" name="olim_ravak" class="zakzak2select form-control">
-            <option value="לא">לא</option>
-            <option value="כן">כן</option>
-          </select>
-
-          <label for="olim_vetek_ravak">וותק בארץ בשנים</label>
-          <input type="text" id="olim_vetek_ravak" name="olim_vetek_ravak" class="zakzak2 form-control">
-        </fieldset>
-
-      </div>
+    <!-- כפתור חישוב -->
+    <div class="text-center mt-3">
+      <button class="btn btn-calc px-5" onclick="calculateEligibility()">חשב</button>
     </div>
-
   </div>
 
   <!-- סקריפטים -->
-  <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-  <script src="bootstrap.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   <script src="zaka.js?v=0.0.9.6"></script>
   <script>
-    $('.nav-tabs a').on('shown.bs.tab', function() {
-      // מבצע חישוב אוטומטי בכל מעבר בין הטאבים, אם רוצים:
-      calculateEligibility();
-    });
     function calculateEligibility() {
-      // כאן לקרוא לפונקציה שלכם הזוכה בחישוב הזכאות
+      // קריאה לפונקציה בחישוב הזכאות שב־zaka.js
       if (typeof computeZaka === 'function') computeZaka();
     }
   </script>
-
 </body>
 </html>
